@@ -447,3 +447,146 @@
                 quick_links: "روابط سريعة",
                 footer_social: "التواصل الاجتماعي", social_li: "لينكد إن", social_tt: "تيك توك", social_ig: "إنستغرام",
                 copyright: "&copy; 2025 بزنس كومباس للاستشارات الإدارية. جميع الحقوق محفوظة."
+            }
+        };
+
+        let currentLang = 'en';
+        let typewriterTimeout;
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            const langBtn = document.querySelector('.lang-btn');
+            const htmlTag = document.documentElement;
+
+            htmlTag.setAttribute('lang', currentLang);
+            htmlTag.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+            langBtn.textContent = currentLang === 'en' ? 'العربية' : 'English';
+
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (translations[currentLang][key]) {
+                    el.innerHTML = translations[currentLang][key];
+                }
+            });
+
+            resetTypewriter();
+        }
+
+        function resetTypewriter() {
+            clearTimeout(typewriterTimeout);
+            const element = document.getElementById("typewriter");
+            element.classList.remove('done');
+            element.innerHTML = "";
+            
+            const text = translations[currentLang].hero_word;
+            let i = 0;
+
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    typewriterTimeout = setTimeout(type, 150);
+                } else {
+                    typewriterTimeout = setTimeout(() => {
+                        element.classList.add('done');
+                    }, 2000);
+                }
+            }
+            type();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(resetTypewriter, 500);
+
+            // Custom Cursor Logic
+            const cursor = document.querySelector('.custom-cursor');
+            
+            // Only attach event listeners if pointer is fine (optimization)
+            if (window.matchMedia("(pointer: fine)").matches) {
+                
+                document.addEventListener('mousemove', (e) => {
+                    cursor.style.left = e.clientX + 'px';
+                    cursor.style.top = e.clientY + 'px';
+                });
+
+                // Add hover effect on ALL interactive elements
+                const interactiveElements = document.querySelectorAll('a, button, input, textarea, select, .cta-btn, .lang-btn, .nav-links a, .service-card, .footer-links a');
+                
+                interactiveElements.forEach(el => {
+                    el.addEventListener('mouseenter', () => {
+                        cursor.classList.add('hover');
+                    });
+                    el.addEventListener('mouseleave', () => {
+                        cursor.classList.remove('hover');
+                    });
+                });
+
+                // Hide cursor when leaving window
+                document.addEventListener('mouseleave', () => {
+                    cursor.style.opacity = '0';
+                });
+                document.addEventListener('mouseenter', () => {
+                    cursor.style.opacity = '1';
+                });
+            }
+
+            // Smooth Scroll for Navigation Links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    
+                    if (targetId === '#home') {
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        });
+                    } else {
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    }
+                });
+            });
+
+            // Active Navigation Link on Scroll
+            const sections = document.querySelectorAll('section[id], header[id]');
+            const navLinks = document.querySelectorAll('.nav-links a');
+
+            function updateActiveLink() {
+                let current = 'home';
+                const scrollPosition = window.scrollY + 200;
+
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.offsetHeight;
+                    
+                    if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                // If at the very top, highlight home
+                if (window.scrollY < 100) {
+                    current = 'home';
+                }
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${current}`) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', updateActiveLink);
+            updateActiveLink(); // Run on page load
+        });
+    </script>
+
+</body>
+</html>
