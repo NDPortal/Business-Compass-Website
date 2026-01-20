@@ -34,14 +34,11 @@
             font-family: 'Inter', sans-serif;
             line-height: 1.6;
             overflow-x: hidden;
-            /* Default cursor behavior (for phones/tablets) */
             cursor: auto; 
         }
 
         /* --- CUSTOM CURSOR SETUP --- */
-        
         .custom-cursor {
-            /* Hidden by default on all devices */
             display: none; 
             position: fixed;
             top: 0;
@@ -50,22 +47,13 @@
             height: 20px;
             pointer-events: none;
             z-index: 9999;
-            opacity: 0; /* Start invisible until mouse moves */
-            
-            /* PERFORMANCE FIX: Use GPU acceleration */
+            opacity: 0;
             will-change: transform; 
-            transition: opacity 0.15s ease, transform 0.1s ease; /* Only smooth the scale/hover effect */
-            
-            /* Initial centering logic is handled in JS transform now */
+            transition: opacity 0.15s ease; /* Only opacity is transitioned via CSS */
             background-image: url('https://raw.githubusercontent.com/NDPortal/Business-Compass-Website/refs/heads/main/Cursor.png');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
-        }
-
-        .custom-cursor.hover {
-            /* We handle the position in JS, so we just add scale here */
-            /* The translation is handled by the JS loop to prevent conflict */
         }
 
         /* RTL Support */
@@ -97,10 +85,27 @@
 
         /* Navigation */
         nav {
-            position: fixed; top: 0; width: 100%; padding: 1.2rem 5%;
-            display: flex; justify-content: space-between; align-items: center;
-            background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px);
-            z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: fixed; /* This makes it follow the user */
+            top: 0; 
+            left: 0;
+            width: 100%; 
+            padding: 1.2rem 5%;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            background: rgba(15, 23, 42, 0.8); 
+            backdrop-filter: blur(12px);
+            z-index: 1000; 
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: padding 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* State for when user scrolls down */
+        nav.scrolled {
+            padding: 0.8rem 5%;
+            background: rgba(15, 23, 42, 0.95);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border-bottom: 1px solid rgba(45, 212, 191, 0.1);
         }
 
         .logo { font-size: 1.5rem; font-weight: 900; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
@@ -121,7 +126,7 @@
             font-family: 'Cairo', sans-serif;
             font-weight: 600;
             transition: 0.3s;
-            cursor: pointer; /* Default pointer for touch */
+            cursor: pointer;
         }
         .lang-btn:hover { border-color: var(--accent); color: var(--accent); }
 
@@ -129,7 +134,7 @@
             padding: 0.6rem 1.5rem; background: var(--accent); color: var(--bg-dark);
             font-weight: 700; border-radius: 50px; font-family: 'Cairo', sans-serif; display: inline-block;
             transition: 0.3s;
-            cursor: pointer; /* Default pointer for touch */
+            cursor: pointer;
         }
         .cta-btn:hover { background: var(--accent-hover); transform: translateY(-2px); }
 
@@ -182,7 +187,7 @@
         .service-card {
             background: var(--bg-card); padding: 2.5rem; border-radius: 16px;
             border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; position: relative; overflow: hidden;
-            cursor: pointer; /* Default */
+            cursor: pointer;
         }
         .service-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px rgba(45, 212, 191, 0.1); }
         .card-icon { font-size: 2rem; color: var(--accent); margin-bottom: 1.5rem; }
@@ -214,31 +219,18 @@
         .copyright { text-align: center; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.05); }
 
         /* --- DEVICE SPECIFIC LOGIC --- */
-
-        /* This Media Query checks if the user has a "fine" pointer (Mouse/Trackpad).
-           The Custom Cursor logic ONLY applies here.
-           It will be ignored by Tablets and Phones (which are "coarse").
-        */
         @media (pointer: fine) {
-            
-            /* Show the custom cursor image */
-            .custom-cursor {
-                display: block;
-            }
-
-            /* Hide the system cursor on everything */
+            .custom-cursor { display: block; }
             body, a, button, input, textarea, select, .cta-btn, .lang-btn, .nav-links a, .footer-links a, .service-card {
                 cursor: none !important;
             }
-
-            /* Ensure hover states still hide the system cursor */
             button:hover, a:hover, .cta-btn:hover, .lang-btn:hover, .nav-links a:hover, 
             .footer-links a:hover, .service-card:hover, input:hover, textarea:hover, select:hover {
                 cursor: none !important;
             }
         }
 
-        /* Mobile Layout Adjustments (Screen Size) */
+        /* Mobile Layout Adjustments */
         @media (max-width: 768px) {
             .hero-text { font-size: 2.5rem; }
             .nav-links { display: none; }
@@ -512,95 +504,42 @@
             const cursor = document.querySelector('.custom-cursor');
             let mouseX = -100; // Initialize off-screen
             let mouseY = -100;
-            let isMoving = false;
             
             // Only attach event listeners if pointer is fine (optimization)
             if (window.matchMedia("(pointer: fine)").matches) {
                 
-                // Track mouse coordinates independently
                 document.addEventListener('mousemove', (e) => {
                     mouseX = e.clientX;
                     mouseY = e.clientY;
-                    
                     // Reveal cursor on first movement
                     if (cursor.style.opacity !== '1') {
                         cursor.style.opacity = '1';
                     }
                 });
 
-                // PERFORMANCE FIX: Use requestAnimationFrame for smooth rendering
-                function animateCursor() {
-                    // Update the transform property (GPU accelerated) instead of top/left (CPU heavy)
-                    // The second translate maintains the centering (-50%, -50%)
-                    if(mouseX !== -100) {
-                        cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
-                    }
-                    
-                    // Show/Hide scale effect based on hover class (handled by classList below)
-                    // We don't need to manually animate scale in JS, CSS transition handles that.
-                    
-                    requestAnimationFrame(animateCursor);
-                }
-                
-                // Start the animation loop
-                requestAnimationFrame(animateCursor);
-
-                // Add hover effect on ALL interactive elements
+                // Add hover effect listeners
                 const interactiveElements = document.querySelectorAll('a, button, input, textarea, select, .cta-btn, .lang-btn, .nav-links a, .service-card, .footer-links a');
                 
                 interactiveElements.forEach(el => {
-                    el.addEventListener('mouseenter', () => {
-                        cursor.classList.add('hover');
-                        // Scale is handled via CSS transform: scale(1.2) inside .hover
-                        // However, since we are setting transform in JS, we need to append the scale to the JS string
-                        // OR (easier) - let JS handle the position, and use a child element for the image scaling.
-                        // For simplicity in this fix, we will just modify the transform string in the loop? 
-                        // Actually, CSS transitions might conflict with the JS transform. 
-                        
-                        // FIX: To allow CSS scaling to work with JS positioning, we apply the scale via a slightly different method
-                        // But sticking to the simplest fix: We just add a scale transform in the JS loop if needed. 
-                        // For now, let's keep it simple. The CSS transition might get overridden.
-                        // Let's modify the JS loop to check for the hover class.
-                    });
-                    el.addEventListener('mouseleave', () => {
-                        cursor.classList.remove('hover');
-                    });
+                    el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+                    el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
                 });
-                
-                // Refined Loop for Hover State
-                // Overwriting the previous loop to include scale support
-                function animateCursorWithScale() {
-                    let scale = cursor.classList.contains('hover') ? 1.5 : 1;
-                    
-                    if(mouseX !== -100) {
-                         cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%) scale(${scale})`;
-                    }
-                    requestAnimationFrame(animateCursorWithScale);
-                }
-                
-                // Cancel previous loop and start this one (just purely replacing the logic here)
-                // In a real scenario, we just declare one function.
-                
-                // Re-declaring the loop correctly for the final code block:
-                function finalLoop() {
+
+                // Single Animation Loop
+                function animateCursor() {
                     let scale = cursor.classList.contains('hover') ? 1.5 : 1;
                     if(mouseX !== -100) {
                         cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%) scale(${scale})`;
                     }
-                    requestAnimationFrame(finalLoop);
+                    requestAnimationFrame(animateCursor);
                 }
-                // Start the final loop
-                // (Note: The previous animateCursor call was illustrative, this overrides it effectively)
-                finalLoop();
-
+                
+                // Start Loop
+                animateCursor();
 
                 // Hide cursor when leaving window
-                document.addEventListener('mouseleave', () => {
-                    cursor.style.opacity = '0';
-                });
-                document.addEventListener('mouseenter', () => {
-                    cursor.style.opacity = '1';
-                });
+                document.addEventListener('mouseleave', () => cursor.style.opacity = '0');
+                document.addEventListener('mouseenter', () => cursor.style.opacity = '1');
             }
 
             // Smooth Scroll for Navigation Links
@@ -610,17 +549,11 @@
                     const targetId = this.getAttribute('href');
                     
                     if (targetId === '#home') {
-                        window.scrollTo({
-                            top: 0,
-                            behavior: 'smooth'
-                        });
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
                     } else {
                         const targetElement = document.querySelector(targetId);
                         if (targetElement) {
-                            targetElement.scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'start'
-                            });
+                            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         }
                     }
                 });
@@ -629,21 +562,32 @@
             // Active Navigation Link on Scroll
             const sections = document.querySelectorAll('section[id], header[id]');
             const navLinks = document.querySelectorAll('.nav-links a');
+            const nav = document.querySelector('nav');
 
-            function updateActiveLink() {
+            function updateActiveLinkAndNav() {
                 let current = 'home';
-                const scrollPosition = window.scrollY + 200;
+                const scrollPosition = window.scrollY;
+
+                // 1. Toggle "Scrolled" class for Navbar style
+                if (scrollPosition > 50) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+
+                // 2. Determine Active Section
+                const triggerPoint = scrollPosition + 200;
 
                 sections.forEach(section => {
                     const sectionTop = section.offsetTop;
                     const sectionHeight = section.offsetHeight;
                     
-                    if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                    if (triggerPoint >= sectionTop && triggerPoint < sectionTop + sectionHeight) {
                         current = section.getAttribute('id');
                     }
                 });
 
-                if (window.scrollY < 100) {
+                if (scrollPosition < 100) {
                     current = 'home';
                 }
 
@@ -655,8 +599,8 @@
                 });
             }
 
-            window.addEventListener('scroll', updateActiveLink);
-            updateActiveLink(); // Run on page load
+            window.addEventListener('scroll', updateActiveLinkAndNav);
+            updateActiveLinkAndNav(); // Run on page load
         });
     </script>
 
