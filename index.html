@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Business Compass | Modernizing the Art of Business</title>
@@ -20,8 +23,8 @@
             --bg-card: #121212;
             --text-main: #ffffff;
             --text-muted: #888888;
-            --accent: #ffffff;          /* White accent */
-            --accent-hover: #cccccc;    /* Light gray hover */
+            --accent: #ffffff;
+            --accent-hover: #cccccc;
             --scrollbar-custom: #333333;
             --scrollbar-hover: #555555;
         }
@@ -34,7 +37,20 @@
             font-family: 'Inter', sans-serif;
             line-height: 1.6;
             overflow-x: hidden;
-            cursor: auto; 
+            cursor: auto;
+            /* Disable text selection by default */
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        /* Allow selection for specific elements */
+        .selectable {
+            user-select: text !important;
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
         }
 
         /* --- CUSTOM CURSOR SETUP --- */
@@ -47,7 +63,6 @@
             z-index: 9999;
             opacity: 0;
             will-change: transform; 
-            /* FIX: Removed 'transform' from transition to remove delay/lag */
             transition: opacity 0.15s ease; 
             background-image: url('https://raw.githubusercontent.com/NDPortal/Business-Compass-Website/refs/heads/main/Cursor.png');
             background-size: contain;
@@ -103,8 +118,8 @@
         .logo { 
             display: flex; 
             align-items: center; 
-            height: 50px; /* Constrain height */
-            z-index: 2; /* Ensure logo is above centered links if screen is small */
+            height: 50px;
+            z-index: 2;
         }
         
         .logo img {
@@ -117,7 +132,6 @@
         .nav-links { 
             display: flex; 
             gap: 2rem; 
-            /* Absolute positioning to strictly center elements relative to screen */
             position: absolute; 
             left: 50%;
             transform: translateX(-50%);
@@ -135,7 +149,7 @@
 
         .nav-actions { 
             display: flex; gap: 1rem; align-items: center; 
-            z-index: 2; /* Ensure buttons are above centered links */
+            z-index: 2;
         }
 
         .lang-btn {
@@ -161,13 +175,13 @@
 
         /* --- UPDATED: CENTERED HERO SECTION --- */
         header {
-            min-height: 100vh; /* Takes full viewport height */
+            min-height: 100vh;
             display: flex; 
             flex-direction: column; 
-            justify-content: center; /* Vertically center */
-            align-items: center;     /* Horizontally center */
+            justify-content: center;
+            align-items: center;
             text-align: center; 
-            padding: 0 1rem; /* Removed top padding to allow true centering */
+            padding: 0 1rem;
             position: relative;
             background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.08), transparent 40%);
         }
@@ -211,7 +225,6 @@
         .section-header h2 { font-size: 2.5rem; margin-bottom: 1rem; }
         .section-header p { color: var(--text-muted); max-width: 600px; margin: 0 auto; }
 
-        /* FIX: justify-content center added to keep cards centered if row isn't full */
         .services-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
@@ -394,7 +407,7 @@
                     <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp
                 </a>
                 <p style="margin-top: 2rem; color: var(--text-muted);">
-                    Email: hq@Business-Compass.org<br>
+                    <span class="selectable">Email: hq@Business-Compass.org</span><br>
                     <span data-key="footer_loc">Jeddah, Saudi Arabia</span>
                 </p>
             </div>
@@ -405,7 +418,7 @@
                 <div class="footer-brand">
                     <h3>Business Compass</h3>
                     <p data-key="footer_desc">Management Consulting Establishment</p>
-                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 10px;" data-key="footer_cr">
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 10px;" data-key="footer_cr" class="selectable">
                         CRN: 4030437166 | Unified No: 7007427995
                     </p>
                 </div>
@@ -427,7 +440,9 @@
             </div>
         </footer>
 
-    </div> <script>
+    </div>
+    
+    <script>
         const translations = {
             en: {
                 nav_home: "Home", nav_services: "Services", nav_about: "About", nav_contact: "Contact",
@@ -475,179 +490,4 @@
                 s4_title: "إنقاذ الأعمال (Turnaround)", s4_desc: "مهمة إنقاذ للشركات القائمة التي تواجه خسائر. تشخيص عميق وتدخل ميداني لوقف النزيف.", s4_price: "رسوم ثابتة: 25,000 ريال",
                 about_title: "الحقيقة الباردة",
                 about_desc: "بقيادة <strong>فريد العمودي</strong>، متخصص في تصحيح المسار بخبرة تزيد عن 20 عاماً. نحن لا نقدم نصائح فقط؛ نحن نوفر البنية التحتية للنجاح.",
-                about_li1: '<i class="fa-solid fa-check"></i> مدير عام سابق لشركة Lush (السعودية)',
-                about_li2: '<i class="fa-solid fa-check"></i> مؤسس Twilight Bar & Lounge',
-                about_li3: '<i class="fa-solid fa-check"></i> امتثال تنظيمي 100% (قوى، مدد، هيئة الغذاء والدواء)',
-                btn_founder: "تعرف على المؤسس", founder_name: "فريد العمودي",
-                contact_title: "تواصل معنا", contact_sub: "جاهز لوقف الخسائر والبدء بالنمو؟ تواصل معنا مباشرة.",
-                btn_whatsapp: '<i class="fa-brands fa-whatsapp"></i> دردشة عبر الواتساب',
-                footer_loc: "جدة، المملكة العربية السعودية", footer_desc: "مؤسسة للاستشارات الإدارية",
-                footer_cr: "س.ت: 4030437166 | الرقم الموحد: 7007427995",
-                quick_links: "روابط سريعة",
-                footer_social: "التواصل الاجتماعي", social_li: "لينكد إن", social_tt: "تيك توك", social_ig: "إنستغرام",
-                copyright: "&copy; 2025 بزنس كومباس للاستشارات الإدارية. جميع الحقوق محفوظة."
-            }
-        };
-
-        const logos = {
-            en: "https://raw.githubusercontent.com/NDPortal/Business-Compass-Website/refs/heads/main/englishlogo.png",
-            ar: "https://raw.githubusercontent.com/NDPortal/Business-Compass-Website/refs/heads/main/arabiclogo.png"
-        };
-
-        let currentLang = 'en';
-        let typewriterTimeout;
-
-        function toggleLanguage() {
-            // 1. Add Fade Out Class
-            const contentWrapper = document.getElementById('content-wrapper');
-            contentWrapper.classList.add('hidden');
-
-            // 2. Wait 300ms for Fade Out, Then Swap Text
-            setTimeout(() => {
-                currentLang = currentLang === 'en' ? 'ar' : 'en';
-                const langBtn = document.querySelector('.lang-btn');
-                const htmlTag = document.documentElement;
-                const logoImg = document.getElementById('nav-logo');
-
-                htmlTag.setAttribute('lang', currentLang);
-                htmlTag.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
-                langBtn.textContent = currentLang === 'en' ? 'العربية' : 'English';
-
-                // Switch Logo Source
-                logoImg.src = logos[currentLang];
-
-                // Swap Text
-                document.querySelectorAll('[data-key]').forEach(el => {
-                    const key = el.getAttribute('data-key');
-                    if (translations[currentLang][key]) {
-                        el.innerHTML = translations[currentLang][key];
-                    }
-                });
-
-                resetTypewriter();
-                
-                // 3. Remove Fade Out Class (Fade In)
-                contentWrapper.classList.remove('hidden');
-
-            }, 300); // 300ms matches CSS transition
-        }
-
-        function resetTypewriter() {
-            clearTimeout(typewriterTimeout);
-            const element = document.getElementById("typewriter");
-            element.classList.remove('done');
-            element.innerHTML = "";
-            
-            const text = translations[currentLang].hero_word;
-            let i = 0;
-
-            function type() {
-                if (i < text.length) {
-                    element.innerHTML += text.charAt(i);
-                    i++;
-                    typewriterTimeout = setTimeout(type, 150);
-                } else {
-                    typewriterTimeout = setTimeout(() => {
-                        element.classList.add('done');
-                    }, 2000);
-                }
-            }
-            type();
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(resetTypewriter, 500);
-
-            // --- OPTIMIZED CUSTOM CURSOR LOGIC ---
-            const cursor = document.querySelector('.custom-cursor');
-            let mouseX = -100; // Initialize off-screen
-            let mouseY = -100;
-            
-            if (window.matchMedia("(pointer: fine)").matches) {
-                
-                document.addEventListener('mousemove', (e) => {
-                    mouseX = e.clientX;
-                    mouseY = e.clientY;
-                    if (cursor.style.opacity !== '1') {
-                        cursor.style.opacity = '1';
-                    }
-                });
-
-                function finalLoop() {
-                    let scale = cursor.classList.contains('hover') ? 1.5 : 1;
-                    if(mouseX !== -100) {
-                        cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%) scale(${scale})`;
-                    }
-                    requestAnimationFrame(finalLoop);
-                }
-                finalLoop();
-
-                const interactiveElements = document.querySelectorAll('a, button, input, textarea, select, .cta-btn, .lang-btn, .nav-links a, .service-card, .footer-links a');
-                
-                interactiveElements.forEach(el => {
-                    el.addEventListener('mouseenter', () => {
-                        cursor.classList.add('hover');
-                    });
-                    el.addEventListener('mouseleave', () => {
-                        cursor.classList.remove('hover');
-                    });
-                });
-
-                document.addEventListener('mouseleave', () => {
-                    cursor.style.opacity = '0';
-                });
-                document.addEventListener('mouseenter', () => {
-                    cursor.style.opacity = '1';
-                });
-            }
-
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href');
-                    
-                    if (targetId === '#home') {
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    } else {
-                        const targetElement = document.querySelector(targetId);
-                        if (targetElement) {
-                            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }
-                    }
-                });
-            });
-
-            const sections = document.querySelectorAll('section[id], header[id]');
-            const navLinks = document.querySelectorAll('.nav-links a');
-
-            function updateActiveLink() {
-                let current = 'home';
-                const scrollPosition = window.scrollY + 200;
-
-                sections.forEach(section => {
-                    const sectionTop = section.offsetTop;
-                    const sectionHeight = section.offsetHeight;
-                    
-                    if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-                        current = section.getAttribute('id');
-                    }
-                });
-
-                if (window.scrollY < 100) {
-                    current = 'home';
-                }
-
-                navLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('href') === `#${current}`) {
-                        link.classList.add('active');
-                    }
-                });
-            }
-
-            window.addEventListener('scroll', updateActiveLink);
-            updateActiveLink(); 
-        });
-    </script>
-</body>
-</html>
+                about_li1: '<i class="fa-solid fa-check"></i> مدير عام سابق ل
